@@ -8,13 +8,35 @@ const contactId = shortid.generate();
 export class Phonebook extends Component {
   state = {
     contacts: [
-      // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' }
+      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    const contactsInLocalStorage = localStorage.getItem('contactsState');
+    const contactsInState = localStorage.getItem('contactsPrevState');
+    if (contactsInLocalStorage || contactsInState) {
+      const contactsState = JSON.parse(contactsInLocalStorage);
+      this.setState({ contacts: contactsState });
+    }
+  }
+
+  componentDidUpdate(prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(
+        'contactsState',
+        JSON.stringify(this.state.contacts),
+      );
+      localStorage.setItem(
+        'contactsPrevState',
+        JSON.stringify(prevState.contacts),
+      );
+    }
+  }
 
   addContact = contact => {
     const contactToAdd = {
@@ -61,8 +83,6 @@ export class Phonebook extends Component {
 
   render() {
     const { contacts, filter } = this.state;
-    console.log(this.state);
-
     return (
       <Fragment>
         <ContactForm id={contactId} onAddContact={this.addContact} />
